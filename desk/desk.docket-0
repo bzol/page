@@ -1,0 +1,11 @@
+:~
+  title+'Template'
+  info+'template for urbit apps'
+  color+0xf2.f3ef
+  version+[0 0 2]
+  website+''
+  license+'MIT'
+  image+''
+  base+'template'
+  glob-ames+[~zod 0v0]
+==

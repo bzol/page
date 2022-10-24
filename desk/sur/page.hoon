@@ -1,4 +1,9 @@
+/+  multipart
 |%
-+$  page  [path mime]
-+$  pages  (list page)
++$  link  path
++$  site  [=link =part:multipart]
++$  action
+  $%
+     [%delete =link]
+  ==
 --

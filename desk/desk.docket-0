@@ -7,5 +7,5 @@
   license+'MIT'
   image+''
   base+'page'
-  glob-ames+[~zod 0v0]
+  glob-ames+[~dev 0v0]
 ==

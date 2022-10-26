@@ -95,13 +95,11 @@
       ~&  '-------'
       ~&  link
       =/  link-path  (stab body.link)
-      :: =/  link-path  (stab (crip (weld (weld (trip body.link) "/") (trip +.file.file))))
       :: TODO validate link and file
       :: TODO replace existing site with new site if link is the same
-      =/  new-sites  (snoc sites:this [link-path +.file])
-      ~&  '=============='
-      ~&  (into link-path 0 'pages')
-      ~&  '=============='
+      =/  delete-idx  (find ~[link-path] (turn sites:this |=(=site link.site)))
+      =/  deleted-sites  sites:this
+      =/  new-sites  (snoc deleted-sites [link-path +.file])
       :_  this(sites new-sites)
       [%pass link-path %arvo %e %connect [~ (into link-path 0 'pages')] %page]~
       ::
@@ -110,12 +108,7 @@
       ~&  (turn sites:this |=(=site link.site))
       =/  site-idx  (find ~[(stab +.link-header)] (turn sites:this |=(=site link.site)))
       =/  new-sites  (oust [+.site-idx 1] sites.this)
-      :: =/  link-path  (stab (crip (weld "/pages" (trip +.link-header))))
       =/  link-path  (stab +.link-header)
-      ~&  link-path
-      ~&  '+++++++++++'
-      ~&  (into link-path 0 'pages')
-      ~&  '+++++++++++'
       :_  this(sites new-sites)
       [%pass link-path %arvo %e %disconnect [~ (into link-path 0 '/pages')]]~
     ==

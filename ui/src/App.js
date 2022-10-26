@@ -6,12 +6,21 @@ import axios from "axios";
 
 const UPLOAD_URL = "/apps/page/upload";
 
+const formatLink = (link) => {
+	let newLink = link;
+	if(newLink[0] !== '/')
+		newLink = '/' + newLink;
+	if(newLink[newLink.length -1] === '/')
+		newLink = newLink.slice(0, newLink.length - 1);
+	return newLink;
+}
+
 const fetchContents = (path) => {
 	return window.urbit.scry({
-    app: "page",
-    path: path,
-  });
-}
+		app: "page",
+		path: path,
+	});
+};
 
 const FileUploader = ({ onFileSelectSuccess, onFileSelectError }) => {
 	const fileInput = useRef(null);
@@ -19,19 +28,14 @@ const FileUploader = ({ onFileSelectSuccess, onFileSelectError }) => {
 	const handleFileInput = (e) => {
 		// handle validations
 		const file = e.target.files[0];
-		if (file.size > 90000)
-			onFileSelectError({ error: "File size cannot exceed more than 90MB" });
+		if (file.size > 100000)
+			onFileSelectError({ error: "File size cannot exceed more than 100MB" });
 		else onFileSelectSuccess(file);
 	};
 
 	return (
 		<div className="file-uploader">
 			<input type="file" onChange={handleFileInput} />
-			{/* <button */}
-			{/* 	onClick={(e) => fileInput.current && fileInput.current.click()} */}
-			{/* 	className="btn btn-primary" */}
-			{/* > */}
-			{/* </button> */}
 		</div>
 	);
 };
@@ -41,43 +45,53 @@ const Home = () => {
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [contents, setContents] = useState([]);
 
-  useEffect(() => {
-		fetchContents('/sites')
-			.then(res => {
+	useEffect(() => {
+		fetchContents("/sites")
+			.then((res) => {
 				setContents(res);
-		})
-			.catch(err => {
+			})
+			.catch((err) => {
 				alert("Failed to fetch info about pages");
-		})
-  }, []);
+			});
+	}, []);
 
 	const handleDelete = (link) => {
-		console.log(link);
-		console.log('delete clicked!');
 		axios
 			.delete(UPLOAD_URL, {
 				headers: {
-					"link": link,
+					link: link,
 				},
 			})
-			.then((res) => {
-			})
+			.then((res) => {})
 			.catch((err) => alert("Delete Failed"));
-		fetchContents('/sites')
-			.then(res => {
+		fetchContents("/sites")
+			.then((res) => {
 				setContents(res);
-		})
-			.catch(err => {
+			})
+			.catch((err) => {
 				alert("Failed to fetch info about pages");
-		})
+			});
+	};
+
+	const handleLinkChange = (link) => {
+
 	}
 
 	const submitForm = () => {
 		// TODO empty selected file should not be allowed
 		const formData = new FormData();
-		formData.append("link", link);
+		formData.append("link", formatLink(link));
 		formData.append("file", selectedFile);
 
+		console.log(formatLink(link));
+
+		if (selectedFile === null) {
+			alert("No file chosen!");
+			return;
+		}
+		const errorText = `Error: Make sure to use correct path, like:
+your/path
+your/path/filename.html`
 		axios
 			.post(UPLOAD_URL, formData, {
 				headers: {
@@ -87,39 +101,51 @@ const Home = () => {
 			.then((res) => {
 				alert("File Upload success");
 			})
-			.catch((err) => alert("File Upload Error"));
+			.catch((err) => alert(errorText));
 		// (fetchContents('/sites'));
 	};
 
 	return (
 		<div className="Home">
+			<h1> %page application </h1>
+			<a href="https://wiby.me/surprise" target="_blank">
+				Surpise yourself/Inspiration
+			</a>
 			<form>
-				<input
-					type="text"
-					value={link}
-					onChange={(e) => setLink(e.target.value)}
-				/>
+				<div className="form-inside">
+					<text>Path:</text>
+					<input
+						className="form-input"
+						type="text"
+						value={link}
+						onChange={(e) => setLink(e.target.value)}
+					/>
+				</div>
 
 				<FileUploader
+					className="form-inside"
 					onFileSelectSuccess={(file) => setSelectedFile(file)}
 					onFileSelectError={({ error }) => alert(error)}
 				/>
 
-				<button onClick={submitForm}>Submit</button>
+				<button className="form-inside" onClick={submitForm}>
+					Submit
+				</button>
 			</form>
-		{ console.log(contents) }
-		{ contents.map(link => {
-			console.log(link);
-			return (
-				<div>
-				<span>
-				{link}
-					<button onClick={() => handleDelete(link)}> Delete </button>
-				</span>
-				<br/>
-				</div>
-			);
-		}) }
+			{contents.map((link) => {
+				return (
+					<div>
+						<span>
+							<text className="link">{link}</text>
+							<button className="delete" onClick={() => handleDelete(link)}>
+								{" "}
+								Delete{" "}
+							</button>
+						</span>
+						<br />
+					</div>
+				);
+			})}
 		</div>
 	);
 };
@@ -127,13 +153,6 @@ const Home = () => {
 class App extends Component {
 	constructor(props) {
 		super(props);
-
-		// window.urbit = new Urbit("http://localhost:8080","","lidlut-tabwed-pillex-ridrup");
-		// window.urbit.ship = 'zod';
-		// window.urbit = new Urbit("http://localhost:8081","","ranser-masfyr-parwyd-sabdux");
-		// window.urbit.ship = 'taclev-togpub-pontus-fadpun';
-		// window.urbit = new Urbit("http://localhost:8080","","magsub-micsev-bacmug-moldex");
-		// window.urbit.ship = 'dev';
 
 		window.urbit = new Urbit("");
 		window.urbit.ship = window.ship;

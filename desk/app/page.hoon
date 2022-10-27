@@ -6,6 +6,7 @@
   ==
 +$  site  [link=path =part:multipart]
 :: TODO add bundles
+
 +$  state-0  [%0 sites=(list site)]
 --
 %-  agent:dbug
@@ -27,14 +28,20 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
-  :: ~&  require-authenticated-simple
   ?+    mark
     (on-poke:def [mark vase])
   ::
       %handle-http-request
-    :: TODO authenticate
     :: TODO a commit deletes the state of the app
     =/  req  !<  (pair @ta inbound-request:eyre)  vase
+    ~&  authenticated.q.req
+    ?.  authenticated.q.req
+      =/  =response-header:http
+        :-  307
+        :~  ['location' '/~/login?redirect=']
+        ==
+      :_  this
+        [%give %fact [/http-response/[p.req]]~ %http-response-header !>(response-header)]~
     ?+    method.request.q.req
       =/  data=octs
         (as-octs:mimes:html '<h1>405 Method Not Allowed</h1>')
@@ -54,19 +61,10 @@
       ==
         %'GET'
       =/  link  (stab url.request.q.req)
-      :: ~&  +.link
       =/  get-link  |=  =site  -.site
       =/  site-idx  (find ~[+.link] (turn sites:this get-link))
-      ~&  +.link
-      :: ~&  (find ~[+.link] (turn sites:this get-link)) 
-      ~&  (turn sites:this get-link)
-      ?~  site-idx
-        ~&  'site-idx null'
-        ~&  site-idx
-        !!
+      ?~  site-idx  !!
       =/  site  (snag +.site-idx sites.this)
-      ~&  site
-
       =/  data=octs
         (as-octs:mimes:html body.part.site)
       =/  content-length=@t
@@ -84,33 +82,29 @@
       ==
       ::
         %'POST'
-      ::
       =/  body  body.request.q.req
       =/  header-list  header-list.request.q.req
       =/  parts  (de-request:multipart header-list body)
-      ~&  parts
-      ~&  '-------'
       =/  link   (snag 0 u.+.parts)
       =/  file   (snag 1 u.+.parts)
-      ~&  '-------'
-      ~&  link
       =/  link-path  (stab body.link)
       :: TODO validate link and file
-      :: TODO replace existing site with new site if link is the same
       =/  delete-idx  (find ~[link-path] (turn sites:this |=(=site link.site)))
-      =/  deleted-sites  sites:this
-      =/  new-sites  (snoc deleted-sites [link-path +.file])
+      =/  new-sites  
+        ?~  delete-idx  
+          (snoc sites:this [link-path +.file])
+        =/  deleted-sites  (oust [+.delete-idx 1] sites.this)
+        (snoc deleted-sites [link-path +.file])
       :_  this(sites new-sites)
-      [%pass link-path %arvo %e %connect [~ (into link-path 0 'pages')] %page]~
+      [%pass link-path %arvo %e %connect [~ (into link-path 0 'p')] %page]~
       ::
         %'DELETE'
       =/  link-header  (snag 3 header-list.request.q.req)
-      ~&  (turn sites:this |=(=site link.site))
       =/  site-idx  (find ~[(stab +.link-header)] (turn sites:this |=(=site link.site)))
       =/  new-sites  (oust [+.site-idx 1] sites.this)
       =/  link-path  (stab +.link-header)
       :_  this(sites new-sites)
-      [%pass link-path %arvo %e %disconnect [~ (into link-path 0 '/pages')]]~
+      [%pass link-path %arvo %e %disconnect [~ (into link-path 0 '/p')]]~
     ==
   ==
 ++  on-watch
@@ -127,12 +121,10 @@
 ++  on-peek   
   |=  =path
   ^-  (unit (unit cage))
-  ~&  'on-peek-called'
   ?+    path  (on-peek:def path)
       [%x %sites ~]  
     =/  sites-json
       [%a (turn sites.this |=(=site [%s (spat link.site)]))]
-    ~&  sites-json
     :: ``json+!>([%a ~[[%s 'hello']]])
     ``json+!>(sites-json)
   ==

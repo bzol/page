@@ -8,12 +8,11 @@ const UPLOAD_URL = "/apps/page/upload";
 
 const formatLink = (link) => {
 	let newLink = link;
-	if(newLink[0] !== '/')
-		newLink = '/' + newLink;
-	if(newLink[newLink.length -1] === '/')
+	if (newLink[0] !== "/") newLink = "/" + newLink;
+	if (newLink[newLink.length - 1] === "/")
 		newLink = newLink.slice(0, newLink.length - 1);
 	return newLink;
-}
+};
 
 const fetchContents = (path) => {
 	return window.urbit.scry({
@@ -28,15 +27,20 @@ const FileUploader = ({ onFileSelectSuccess, onFileSelectError }) => {
 	const handleFileInput = (e) => {
 		// handle validations
 		const file = e.target.files[0];
-		if (file.size > 100000)
-			onFileSelectError({ error: "File size cannot exceed more than 100MB" });
+		if (file.size > 1000000)
+			onFileSelectError({ error: "File size cannot exceed more than 1MB" });
 		else onFileSelectSuccess(file);
 	};
 
 	return (
-		<div className="file-uploader">
-			<input type="file" onChange={handleFileInput} />
-		</div>
+		<label className="button fileuploader">
+			Choose File
+			<input
+				className="fileuploader-input"
+				type="file"
+				onChange={handleFileInput}
+			/>
+		</label>
 	);
 };
 
@@ -73,17 +77,12 @@ const Home = () => {
 			});
 	};
 
-	const handleLinkChange = (link) => {
-
-	}
+	const handleLinkChange = (link) => {};
 
 	const submitForm = () => {
-		// TODO empty selected file should not be allowed
 		const formData = new FormData();
 		formData.append("link", formatLink(link));
 		formData.append("file", selectedFile);
-
-		console.log(formatLink(link));
 
 		if (selectedFile === null) {
 			alert("No file chosen!");
@@ -91,7 +90,7 @@ const Home = () => {
 		}
 		const errorText = `Error: Make sure to use correct path, like:
 your/path
-your/path/filename.html`
+your/path/filename.html`;
 		axios
 			.post(UPLOAD_URL, formData, {
 				headers: {
@@ -99,45 +98,59 @@ your/path/filename.html`
 				},
 			})
 			.then((res) => {
+				console.log(res);
+				fetchContents("/sites")
+					.then((res) => {
+						setContents(res);
+					})
+					.catch((err) => {
+						alert("Failed to fetch info about pages");
+					});
 				alert("File Upload success");
 			})
 			.catch((err) => alert(errorText));
-		// (fetchContents('/sites'));
 	};
 
 	return (
 		<div className="Home">
-			<h1> %page application </h1>
-			<a href="https://wiby.me/surprise" target="_blank">
-				Surpise yourself/Inspiration
-			</a>
+			<div>
+				<h1> %page application </h1>
+				<a
+					className="button surprise"
+					href="https://wiby.me/surprise"
+					target="_blank"
+				>
+					Surprise yourself
+				</a>
+			</div>
+			<h4>Find your pages under yourdomain/p/ </h4>
 			<form>
-				<div className="form-inside">
-					<text>Path:</text>
-					<input
-						className="form-input"
-						type="text"
-						value={link}
-						onChange={(e) => setLink(e.target.value)}
-					/>
-				</div>
+				<input
+					className="path"
+					type="text"
+					placeholder="Path"
+					value={link}
+					onChange={(e) => setLink(e.target.value)}
+				/>
 
 				<FileUploader
-					className="form-inside"
 					onFileSelectSuccess={(file) => setSelectedFile(file)}
 					onFileSelectError={({ error }) => alert(error)}
 				/>
 
-				<button className="form-inside" onClick={submitForm}>
+				<button className="button submit" onClick={submitForm}>
 					Submit
 				</button>
 			</form>
 			{contents.map((link) => {
 				return (
-					<div>
-						<span>
+					<div className="upload">
+						<span className="upload-item">
 							<text className="link">{link}</text>
-							<button className="delete" onClick={() => handleDelete(link)}>
+							<button
+								className="button delete"
+								onClick={() => handleDelete(link)}
+							>
 								{" "}
 								Delete{" "}
 							</button>

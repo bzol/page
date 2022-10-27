@@ -6,11 +6,16 @@ import axios from "axios";
 
 const UPLOAD_URL = "/apps/page/upload";
 
+console.log(window.location);
+
 const getClassName = (selectedFile) => {
 	if(selectedFile === null)
 		return "button fileuploader";
 	return "button fileuploader-green";
 }
+
+console.log(document.domain);
+// console.log(location.port);
 
 const formatLink = (link) => {
 	let newLink = link;
@@ -37,6 +42,8 @@ const FileUploader = ({ onFileSelectSuccess, onFileSelectError, selectedFile }) 
 			onFileSelectError({ error: "File size cannot exceed more than 1MB" });
 		else onFileSelectSuccess(file);
 	};
+
+	console.log(window.location.port);
 
 	return (
 		<label className={getClassName(selectedFile)}>
@@ -156,7 +163,7 @@ your/path/filename.html`;
 							<div className="upload-buttons">
 							<a
 								className="button jump"
-								href={"../p" + link}
+								href={window.origin + '/p' + link}
 								target="_blank"
 							>
 								jump

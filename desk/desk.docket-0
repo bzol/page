@@ -1,11 +1,11 @@
 :~
   title+'Page'
-  info+'render html pages for urbit'
-  color+0xf2.f3ef
-  version+[0 0 2]
-  website+''
+  info+'Serve webpages for Urbit'
+  color+0x0
+  version+[1 0 0]
+  website+'https://github.com/bzol/page'
   license+'MIT'
-  image+''
+  image+'https://static.vecteezy.com/system/resources/previews/003/731/316/original/web-icon-line-on-white-background-image-for-web-presentation-logo-icon-symbol-free-vector.jpg'
   base+'page'
-  glob-ames+[~dev 0v0]
+  glob-ames+[~dister-pontus-fadpun 0v0]
 ==

@@ -5,7 +5,6 @@
   $%  state-0
   ==
 +$  site  [link=path =part:multipart]
-:: TODO add bundles
 
 +$  state-0  [%0 sites=(list site)]
 --
@@ -23,8 +22,16 @@
   :_  this
   :~  [%pass /bind-page %arvo %e %connect [~ /apps/page/upload] %page]
   ==
-++  on-save  on-save:def
-++  on-load  on-load:def
+++  on-save
+  ^-  vase
+  !>(state)
+++  on-load
+  |=  old-state=vase
+  ^-  (quip card _this)
+  =/  old  !<(versioned-state old-state)
+  ?-  -.old
+    %0  `this(state old)
+  ==
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
@@ -32,10 +39,8 @@
     (on-poke:def [mark vase])
   ::
       %handle-http-request
-    :: TODO a commit deletes the state of the app
     =/  req  !<  (pair @ta inbound-request:eyre)  vase
-    ~&  authenticated.q.req
-    ?.  authenticated.q.req
+    ?.  |(authenticated.q.req =(method.request.q.req %'GET'))
       =/  =response-header:http
         :-  307
         :~  ['location' '/~/login?redirect=']
@@ -88,7 +93,6 @@
       =/  link   (snag 0 u.+.parts)
       =/  file   (snag 1 u.+.parts)
       =/  link-path  (stab body.link)
-      :: TODO validate link and file
       =/  delete-idx  (find ~[link-path] (turn sites:this |=(=site link.site)))
       =/  new-sites  
         ?~  delete-idx  
@@ -104,7 +108,7 @@
       =/  new-sites  (oust [+.site-idx 1] sites.this)
       =/  link-path  (stab +.link-header)
       :_  this(sites new-sites)
-      [%pass link-path %arvo %e %disconnect [~ (into link-path 0 '/p')]]~
+      [%pass link-path %arvo %e %disconnect [~ (into link-path 0 'p')]]~
     ==
   ==
 ++  on-watch
@@ -125,7 +129,6 @@
       [%x %sites ~]  
     =/  sites-json
       [%a (turn sites.this |=(=site [%s (spat link.site)]))]
-    :: ``json+!>([%a ~[[%s 'hello']]])
     ``json+!>(sites-json)
   ==
 ++  on-agent  on-agent:def

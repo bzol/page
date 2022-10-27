@@ -3,12 +3,16 @@ html {
 	/* background-color: #FFD59D; */
 }
 
+.head {
+	width: 620px;
+}
+
 h1 {
 	display: inline;
 }
 
 .button {
-  background-color: #BE633F;
+  background-color: #FF8E31;
   color: white;
 	border: none;
   text-decoration: none;
@@ -25,11 +29,13 @@ h1 {
 
 .surprise {
 	padding: 12px 25px;
-	margin-left: 150px;
+	/* margin-left: 150px; */
+	float: right;
 	background-color: orange;
 }
 
 form {
+	width: 620px;
 	margin-top: 30px;
 }
 
@@ -47,26 +53,59 @@ form {
 }
 
 .fileuploader {
+	background-color: red;
 	padding: 4px 5px;
-	margin-right: 40px;
+	/* margin-right: 40px; */
+}
+
+.fileuploader-green {
+	background-color: green;
+	padding: 4px 5px;
+	/* margin-right: 40px; */
 }
 
 .submit {
 	/* padding: 4px 25px; */
 	padding: 4px 60px;
+	float: right;
 }
 
-
 .upload {
+	margin-top: 50px;
+	width: 610px;
 }
 
 .upload-item {
+	display: block;
+	/* width: 100%; */
+	border-bottom-style: solid;
+  border-width: 1px;
+	width: 605px;
+	/* padding: 2px 0px 2px 0px; */
 }
 
 .link {
+	/* padding: 0px 100px 0px 0px; */
+	margin-right: 300px;
+}
+
+.upload-buttons {
+	float: right;
 }
 
 .delete {
+	background-color: red;
+	padding: 0px 20px;
+	float:left;
+	margin: 0px;
+}
+
+.jump {
+	background-color: green;
+	padding: 0px 25px;
+	float:left;
+	/* margin-left: 95px; */ 
+	margin-right: 0px;
 }
 
 .fileuploader-input {

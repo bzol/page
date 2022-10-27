@@ -6,6 +6,12 @@ import axios from "axios";
 
 const UPLOAD_URL = "/apps/page/upload";
 
+const getClassName = (selectedFile) => {
+	if(selectedFile === null)
+		return "button fileuploader";
+	return "button fileuploader-green";
+}
+
 const formatLink = (link) => {
 	let newLink = link;
 	if (newLink[0] !== "/") newLink = "/" + newLink;
@@ -21,7 +27,7 @@ const fetchContents = (path) => {
 	});
 };
 
-const FileUploader = ({ onFileSelectSuccess, onFileSelectError }) => {
+const FileUploader = ({ onFileSelectSuccess, onFileSelectError, selectedFile }) => {
 	const fileInput = useRef(null);
 
 	const handleFileInput = (e) => {
@@ -33,7 +39,7 @@ const FileUploader = ({ onFileSelectSuccess, onFileSelectError }) => {
 	};
 
 	return (
-		<label className="button fileuploader">
+		<label className={getClassName(selectedFile)}>
 			Choose File
 			<input
 				className="fileuploader-input"
@@ -113,7 +119,7 @@ your/path/filename.html`;
 
 	return (
 		<div className="Home">
-			<div>
+			<div className="head">
 				<h1> %page application </h1>
 				<a
 					className="button surprise"
@@ -123,7 +129,6 @@ your/path/filename.html`;
 					Surprise yourself
 				</a>
 			</div>
-			<h4>Find your pages under yourdomain/p/ </h4>
 			<form>
 				<input
 					className="path"
@@ -136,29 +141,37 @@ your/path/filename.html`;
 				<FileUploader
 					onFileSelectSuccess={(file) => setSelectedFile(file)}
 					onFileSelectError={({ error }) => alert(error)}
+					selectedFile={selectedFile}
 				/>
 
 				<button className="button submit" onClick={submitForm}>
 					Submit
 				</button>
 			</form>
+			<div className="upload">
 			{contents.map((link) => {
 				return (
-					<div className="upload">
-						<span className="upload-item">
+						<div className="upload-item">
 							<text className="link">{link}</text>
+							<div className="upload-buttons">
+							<a
+								className="button jump"
+								href={"../p" + link}
+								target="_blank"
+							>
+								jump
+							</a>
 							<button
 								className="button delete"
 								onClick={() => handleDelete(link)}
 							>
-								{" "}
-								Delete{" "}
+								delete
 							</button>
-						</span>
-						<br />
-					</div>
+							</div>
+						</div>
 				);
 			})}
+			</div>
 		</div>
 	);
 };

@@ -103,10 +103,10 @@
       [%pass link-path %arvo %e %connect [~ (into link-path 0 'p')] %page]~
       ::
         %'DELETE'
-      =/  link-header  (snag 3 header-list.request.q.req)
-      =/  site-idx  (find ~[(stab +.link-header)] (turn sites:this |=(=site link.site)))
+      =/  link-header  (skim header-list.request.q.req |=(h=[@ta @ta] =(-.h 'link')))
+      =/  site-idx  (find ~[(stab ->.link-header)] (turn sites:this |=(=site link.site)))
       =/  new-sites  (oust [+.site-idx 1] sites.this)
-      =/  link-path  (stab +.link-header)
+      =/  link-path  (stab ->.link-header)
       :_  this(sites new-sites)
       [%pass link-path %arvo %e %disconnect [~ (into link-path 0 'p')]]~
     ==

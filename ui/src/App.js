@@ -73,10 +73,11 @@ const Home = () => {
 	}, []);
 
 	const handleDelete = (link) => {
+		console.log(link);
 		axios
 			.delete(UPLOAD_URL, {
 				headers: {
-					link: link,
+					// link: link,
 				},
 			})
 			.then((res) => {})

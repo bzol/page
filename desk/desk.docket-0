@@ -1,6 +1,6 @@
 :~
   title+'Page'
-  info+'Serve webpages for Urbit'
+  info+'Serve webpages on Urbit'
   color+0x0
   version+[1 0 0]
   website+'https://github.com/bzol/page'

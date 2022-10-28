@@ -6,16 +6,11 @@ import axios from "axios";
 
 const UPLOAD_URL = "/apps/page/upload";
 
-console.log(window.location);
-
 const getClassName = (selectedFile) => {
 	if(selectedFile === null)
 		return "button fileuploader";
 	return "button fileuploader-green";
 }
-
-console.log(document.domain);
-// console.log(location.port);
 
 const formatLink = (link) => {
 	let newLink = link;
@@ -43,7 +38,6 @@ const FileUploader = ({ onFileSelectSuccess, onFileSelectError, selectedFile }) 
 		else onFileSelectSuccess(file);
 	};
 
-	console.log(window.location.port);
 
 	return (
 		<label className={getClassName(selectedFile)}>
@@ -73,11 +67,10 @@ const Home = () => {
 	}, []);
 
 	const handleDelete = (link) => {
-		console.log(link);
 		axios
 			.delete(UPLOAD_URL, {
 				headers: {
-					// link: link,
+					link: link,
 				},
 			})
 			.then((res) => {})
@@ -112,7 +105,6 @@ your/path/filename.html`;
 				},
 			})
 			.then((res) => {
-				console.log(res);
 				fetchContents("/sites")
 					.then((res) => {
 						setContents(res);

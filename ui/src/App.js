@@ -133,7 +133,7 @@ your/path/filename.html`;
 				<input
 					className="path"
 					type="text"
-					placeholder="Path"
+					placeholder="url (e.g. example/filename.html)"
 					value={link}
 					onChange={(e) => setLink(e.target.value)}
 				/>
